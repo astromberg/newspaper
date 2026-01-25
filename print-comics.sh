@@ -32,9 +32,12 @@ PDF_FILE="funny-pages-${TODAY}.pdf"
 
 # Convert HTML to PDF using headless Chrome
 echo "$(date): Converting HTML to PDF..."
-chromium-browser --headless --print-to-pdf="$PDF_FILE" --no-margins "$HTML_FILE" 2>/dev/null \
-    || google-chrome --headless --print-to-pdf="$PDF_FILE" --no-margins "$HTML_FILE" 2>/dev/null \
-    || chromium --headless --print-to-pdf="$PDF_FILE" --no-margins "$HTML_FILE" 2>/dev/null
+CHROME_FLAGS="--headless --disable-gpu --no-sandbox --disable-software-rasterizer --disable-dev-shm-usage --password-store=basic --print-to-pdf=$PDF_FILE --no-margins"
+
+chromium-browser $CHROME_FLAGS "$HTML_FILE" 2>/dev/null \
+    || google-chrome $CHROME_FLAGS "$HTML_FILE" 2>/dev/null \
+    || chromium $CHROME_FLAGS "$HTML_FILE" 2>/dev/null \
+    || google-chrome-stable $CHROME_FLAGS "$HTML_FILE" 2>/dev/null
 
 # Print it
 if [ -f "$PDF_FILE" ]; then

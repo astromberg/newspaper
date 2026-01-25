@@ -55,7 +55,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .comic {{
             break-inside: avoid;
             page-break-inside: avoid;
-            margin-bottom: 0.25in;
+            margin-bottom: 0.35in;
         }}
 
         .comic img {{
@@ -71,16 +71,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             color: #333;
         }}
 
-        /* For single column, fit ~3 comics per page */
-        .single-column .comic {{
-            max-height: 3in;
-            margin-bottom: 0.3in;
-        }}
-
-        .single-column .comic img {{
-            max-height: 2.8in;
-            width: auto;
-            max-width: 100%;
+        @page {{
+            margin: 0.5in;
         }}
 
         @media print {{

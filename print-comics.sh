@@ -23,7 +23,7 @@ trap 'send_failure_email "Script failed on line $LINENO"' ERR
 
 # Generate today's comics as HTML
 echo "$(date): Generating comics..."
-~/.local/bin/uv run newspaper --format html
+~/.local/bin/uv run newspaper --format html --columns 1
 
 # Get today's filename
 TODAY=$(date +%Y-%m-%d)
@@ -42,10 +42,11 @@ chromium-browser $CHROME_FLAGS "$HTML_FILE" 2>/dev/null \
 # Print it
 if [ -f "$PDF_FILE" ]; then
     echo "$(date): Printing $PDF_FILE..."
+    # Print double-sided (duplex)
     if [ -n "$PRINTER" ]; then
-        lp -d "$PRINTER" "$PDF_FILE"
+        lp -d "$PRINTER" -o sides=two-sided-long-edge "$PDF_FILE"
     else
-        lp "$PDF_FILE"
+        lp -o sides=two-sided-long-edge "$PDF_FILE"
     fi
 
     # Optional: remove after printing (uncomment to enable)

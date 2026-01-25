@@ -55,6 +55,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .comic {{
             break-inside: avoid;
             page-break-inside: avoid;
+            margin-bottom: 0.25in;
         }}
 
         .comic img {{
@@ -64,10 +65,22 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         }}
 
         .comic-name {{
-            font-size: 10pt;
+            font-size: 12pt;
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             color: #333;
+        }}
+
+        /* For single column, fit ~3 comics per page */
+        .single-column .comic {{
+            max-height: 3in;
+            margin-bottom: 0.3in;
+        }}
+
+        .single-column .comic img {{
+            max-height: 2.8in;
+            width: auto;
+            max-width: 100%;
         }}
 
         @media print {{
@@ -95,7 +108,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div class="date">{date_long}</div>
     </header>
 
-    <div class="comics">
+    <div class="comics{single_column_class}">
 {comics_html}
     </div>
 </body>
@@ -129,11 +142,14 @@ def generate_html(
             COMIC_TEMPLATE.format(image_data=img_b64, name=comic.name)
         )
 
+    single_column_class = " single-column" if columns == 1 else ""
+
     html = HTML_TEMPLATE.format(
         title=title,
         date=date_str,
         date_long=date_long,
         columns=columns,
+        single_column_class=single_column_class,
         comics_html="\n".join(comics_html_parts),
     )
 

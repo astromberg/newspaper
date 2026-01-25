@@ -8,18 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # Configuration
-EMAIL="your-email@example.com"  # Change this to your email
 PRINTER=""  # Leave empty for default, or set to printer name
-
-# Function to send failure email
-send_failure_email() {
-    local error_msg="$1"
-    echo "Comics generation/printing failed at $(date): $error_msg" | \
-        mail -s "🚨 Daily Comics Failed" "$EMAIL"
-}
-
-# Trap errors and send email
-trap 'send_failure_email "Script failed on line $LINENO"' ERR
 
 # Generate today's comics as HTML
 echo "$(date): Generating comics..."
@@ -54,6 +43,6 @@ if [ -f "$PDF_FILE" ]; then
 
     echo "$(date): Successfully printed $PDF_FILE"
 else
-    send_failure_email "PDF file not generated: $PDF_FILE"
+    echo "$(date): ERROR - PDF file not generated: $PDF_FILE"
     exit 1
 fi

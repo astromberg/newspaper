@@ -17,6 +17,7 @@ STATE_FILE = Path.home() / ".newspaper_state.json"
 # These cycle through historical strips instead of fetching today's date
 ARCHIVE_COMICS = {
     "ozy-and-millie": ("Ozy and Millie", date(2022, 2, 1), date(2025, 12, 31)),
+    "foxtrotclassics": ("FoxTrot Classics", date(2020, 1, 1), date(2025, 12, 31)),
 }
 
 # Far Side configuration
@@ -29,7 +30,6 @@ DEFAULT_COMICS = [
     ("garfield", "Garfield"),
     ("bignate", "Big Nate"),
     ("foxtrotclassics", "FoxTrot Classics"),
-    ("zits", "Zits"),
     ("babyblues", "Baby Blues"),
     ("pearlsbeforeswine", "Pearls Before Swine"),
     ("ozy-and-millie", "Ozy and Millie"),

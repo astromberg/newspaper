@@ -21,12 +21,20 @@ send_failure_email() {
 # Trap errors and send email
 trap 'send_failure_email "Script failed on line $LINENO"' ERR
 
-# Generate today's comics
+# Generate today's comics as HTML
 echo "$(date): Generating comics..."
-~/.local/bin/uv run newspaper --format pdf
+~/.local/bin/uv run newspaper --format html
 
 # Get today's filename
-PDF_FILE="funny-pages-$(date +%Y-%m-%d).pdf"
+TODAY=$(date +%Y-%m-%d)
+HTML_FILE="funny-pages-${TODAY}.html"
+PDF_FILE="funny-pages-${TODAY}.pdf"
+
+# Convert HTML to PDF using headless Chrome
+echo "$(date): Converting HTML to PDF..."
+chromium-browser --headless --print-to-pdf="$PDF_FILE" --no-margins "$HTML_FILE" 2>/dev/null \
+    || google-chrome --headless --print-to-pdf="$PDF_FILE" --no-margins "$HTML_FILE" 2>/dev/null \
+    || chromium --headless --print-to-pdf="$PDF_FILE" --no-margins "$HTML_FILE" 2>/dev/null
 
 # Print it
 if [ -f "$PDF_FILE" ]; then
@@ -38,7 +46,7 @@ if [ -f "$PDF_FILE" ]; then
     fi
 
     # Optional: remove after printing (uncomment to enable)
-    # rm "$PDF_FILE"
+    # rm "$PDF_FILE" "$HTML_FILE"
 
     echo "$(date): Successfully printed $PDF_FILE"
 else

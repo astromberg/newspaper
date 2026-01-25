@@ -36,6 +36,8 @@ DEFAULT_COMICS = [
     ("phoebe-and-her-unicorn", "Phoebe and Her Unicorn"),
     ("shermanslagoon", "Sherman's Lagoon"),
     ("forbetterorforworse", "For Better Or Worse"),
+    ("getfuzzy", "Get Fuzzy"),
+    ("frazz", "Frazz"),
     ("farside", "The Far Side"),
 ]
 

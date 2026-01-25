@@ -34,6 +34,8 @@ DEFAULT_COMICS = [
     ("pearlsbeforeswine", "Pearls Before Swine"),
     ("ozy-and-millie", "Ozy and Millie"),
     ("phoebe-and-her-unicorn", "Phoebe and Her Unicorn"),
+    ("shermanslagoon", "Sherman's Lagoon"),
+    ("forbetterorforworse", "For Better Or Worse"),
     ("farside", "The Far Side"),
 ]
 

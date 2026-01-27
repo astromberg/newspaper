@@ -6,8 +6,9 @@ from datetime import date, datetime
 from pathlib import Path
 
 from newspaper.comics import DEFAULT_COMICS, fetch_comics
+from newspaper.extras import get_daily_joke
 from newspaper.html import generate_html
-from newspaper.pdf import generate_pdf
+from newspaper.pdf_weasy import generate_pdf
 
 
 def parse_date(date_str: str) -> date:
@@ -61,6 +62,11 @@ def main() -> None:
         action="store_true",
         help="List available comics and exit",
     )
+    parser.add_argument(
+        "--save-html",
+        action="store_true",
+        help="Save intermediate HTML file alongside PDF (for debugging/preview)",
+    )
 
     args = parser.parse_args()
 
@@ -74,14 +80,18 @@ def main() -> None:
     ext = args.format
     output_path = args.output or Path(f"funny-pages-{comic_date.isoformat()}.{ext}")
 
-    # Fetch comics and generate output
+    # Fetch comics and get joke
     comics = asyncio.run(fetch_comics(comic_date))
+    joke = get_daily_joke()
 
     if comics:
         if args.format == "html":
             generate_html(comics, output_path, columns=args.columns, title=args.title)
         else:
-            generate_pdf(comics, output_path, title=args.title)
+            generate_pdf(
+                comics, output_path,
+                title=args.title, joke=joke, save_html=args.save_html,
+            )
         print(f"\nDone! Print {output_path} for your kids.")
     else:
         print("\nNo comics could be fetched. Check your internet connection.")

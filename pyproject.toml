@@ -8,6 +8,7 @@ dependencies = [
     "httpx>=0.28.1",
     "pillow>=11.3.0",
     "reportlab>=4.4.9",
+    "weasyprint>=66.0",
 ]
 
 [project.scripts]

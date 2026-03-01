@@ -142,9 +142,14 @@ async def fetch_gocomics(
     return Comic(name=name, slug=slug, image_data=img_response.content, date=comic_date)
 
 
-async def fetch_farside(client: httpx.AsyncClient) -> Comic | None:
-    """Fetch today's Far Side comic from thefarside.com."""
-    url = "https://www.thefarside.com"
+async def fetch_farside(client: httpx.AsyncClient, comic_date: date | None = None) -> Comic | None:
+    """Fetch The Far Side daily dose comic from thefarside.com."""
+    if comic_date is None:
+        comic_date = date.today()
+    url = (
+        f"https://www.thefarside.com/"
+        f"{comic_date.year}/{comic_date.month:02d}/{comic_date.day:02d}/0"
+    )
 
     try:
         response = await client.get(url)
@@ -153,8 +158,8 @@ async def fetch_farside(client: httpx.AsyncClient) -> Comic | None:
         print(f"  Warning: Could not fetch The Far Side: {e}")
         return None
 
-    # Find the comic image URL - look for splash_images in the CDN
-    pattern = r'(https://siteassets\.thefarside\.com/uploads/splash_images/[^"\'>\s]+)'
+    # The daily dose comics use lazy-loading with data-src on featureassets.amuniversal.com
+    pattern = r'data-src="(https://featureassets\.amuniversal\.com/assets/[a-f0-9]+)"'
     match = re.search(pattern, response.text)
 
     if not match:
@@ -174,7 +179,7 @@ async def fetch_farside(client: httpx.AsyncClient) -> Comic | None:
         name=FARSIDE_NAME,
         slug="farside",
         image_data=img_response.content,
-        date=date.today(),
+        date=comic_date,
     )
 
 
@@ -184,7 +189,7 @@ async def fetch_comic(
     """Fetch a single comic strip from the appropriate source."""
     # Handle Far Side specially
     if slug == "farside":
-        return await fetch_farside(client)
+        return await fetch_farside(client, comic_date)
 
     # Handle archive comics (use their own date progression)
     if slug in ARCHIVE_COMICS:

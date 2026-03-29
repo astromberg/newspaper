@@ -104,33 +104,16 @@ async def fetch_gocomics(
         print(f"  Warning: Could not fetch {name}: {e}")
         return None
 
-    # Find the comic image - look for the main comic image in srcSet
-    # Pattern: featureassets.gocomics.com/assets/{id}?optimizer=...
-    pattern = r'Comic_comic__image[^>]*srcSet="([^"]+)"'
+    # Find the comic image URL from the embedded JSON data
+    # GoComics now stores image URLs in Next.js page data as contentUrl
+    pattern = r'"contentUrl":"(https://featureassets\.gocomics\.com/assets/[a-f0-9]+)"'
     match = re.search(pattern, response.text)
 
     if match:
-        srcset = match.group(1).replace("&amp;", "&")
-        # Extract the asset ID and build a high-quality URL
-        asset_match = re.search(r'/assets/([a-f0-9]+)\?', srcset)
-        if asset_match:
-            asset_id = asset_match.group(1)
-            image_url = (
-                f"https://featureassets.gocomics.com/assets/{asset_id}"
-                "?optimizer=image&width=900&quality=85"
-            )
-        else:
-            print(f"  Warning: Could not parse asset ID for {name}")
-            return None
+        image_url = match.group(1) + "?optimizer=image&width=900&quality=85"
     else:
-        # Fallback: try old pattern
-        old_pattern = r'(https://assets\.amuniversal\.com/[a-f0-9]+)'
-        old_match = re.search(old_pattern, response.text)
-        if old_match:
-            image_url = old_match.group(1)
-        else:
-            print(f"  Warning: Could not find image for {name}")
-            return None
+        print(f"  Warning: Could not find image for {name}")
+        return None
 
     try:
         img_response = await client.get(image_url)
@@ -218,7 +201,9 @@ async def fetch_comics(
 
     async with httpx.AsyncClient(
         headers={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
         },
         follow_redirects=True,
         timeout=30.0,
